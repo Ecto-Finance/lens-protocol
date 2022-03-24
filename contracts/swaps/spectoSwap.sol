@@ -1,8 +1,10 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
+
+import "@openzeppelin/contracts/access/Ownable.sol";
 import '@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol';
 
-contract SpectoSwap is ERC721Enumerable {
+contract SpectoSwap is ERC721Enumerable, Ownable {
 
 	// Original non-lens NFT
     address collectionNFTAddress;
@@ -19,7 +21,7 @@ contract SpectoSwap is ERC721Enumerable {
         followNFTAddress = _followNFTAddress;
 
     }
-    
+
     /**
 	 * @notice Allows swap to lens NFT
 	 * @param tokenId of collection NFT you wish to swap
@@ -42,5 +44,13 @@ contract SpectoSwap is ERC721Enumerable {
         IERC721(followerNFTAddress).safeTransferFrom(msg.sender, address(this), tokenId);
         IERC721(collectionNFTAddress).safeTransferFrom(address(this), msg.sender, tokenId);
         emit SwapFromLens(msg.sender);
+    }
+
+    function updateCollectionNFTAddress(address _newAddress) public onlyOwner {
+        collectionNFTAddress = _newAddress;
+    }
+
+    function updateFollowNFTAddress(address _newAddress) public onlyOwner {
+        followNFTAddress = _newAddress;
     }
 }
