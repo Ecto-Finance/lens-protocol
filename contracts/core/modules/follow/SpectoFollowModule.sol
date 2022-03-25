@@ -20,10 +20,6 @@ contract SpectoFollowModule is IFollowModule, FollowValidatorFollowModuleBase {
     mapping(address => mapping(uint256 => mapping(address => bool)))
         internal _approvedByProfileByOwner;
 
-    // Owner, Profile_Id, token_Id = address
-    mapping(address => mapping(uint256 => mapping(uint => address))) 
-    	internal _approvedByProfileByOwner;
-
     // Collection address
     address collection;
 
