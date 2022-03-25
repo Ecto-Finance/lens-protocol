@@ -32,7 +32,7 @@ describe("SpectoSwap", function () {
 		await cNFT.deployed();
 
 		// Deploy Follow NFT
-		sfNFT = await collectionNFT.deploy();
+		sfNFT = await spectoFollowNFT.deploy();
 		await sfNFT.deployed();
 
 		// Deploy spectoswap with above two addresses
@@ -83,7 +83,7 @@ describe("Scenario 1: Create Profile w/ SpectoFollowNFT and swap NFT", function 
 		await cNFT.deployed();
 
 		// Deploy Follow NFT
-		sfNFT = await collectionNFT.deploy();
+		sfNFT = await spectoFollowNFT.deploy();
 		await sfNFT.deployed();
 
 		// Deploy spectoswap with above two addresses
