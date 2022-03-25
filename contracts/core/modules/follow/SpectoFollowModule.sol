@@ -46,12 +46,26 @@ contract ApprovalFollowModule is IFollowModule, FollowValidatorFollowModuleBase 
         address owner = IERC721(HUB).ownerOf(profileId);
         if (msg.sender != owner) revert Errors.NotProfileOwner();
 
+        // Initialize FollowNFT
+        initialize(profileId, "Ecto", "ECTO");
+        // Mint all Follow NFT
+        mintAllFollowNFT();
+        // The delegatee address is receiving the governance power delegation.
+        delegate(address(this));
+        
         /*for (uint256 i = 0; i < addresses.length; ++i) {
         	if(IERC721(collection).ownerOf(tokenId[i]) == msg.sender) revert Errors.NotCollectionNFTOwner();
             _approvedByProfileByOwner[owner][profileId][tokenId[i]] = addresses[i]; //toApprove[i];
         }*/
 
         emit Events.FollowsApproved(owner, profileId, addresses, toApprove, block.timestamp);
+    }
+
+    // Mints FollowNFT to owner
+    function mintAllFollowNFT() internal {
+        for(uint256 i = 0; i < 10; i++) {
+            mint(msg.sender)
+        }
     }
 
     /**
