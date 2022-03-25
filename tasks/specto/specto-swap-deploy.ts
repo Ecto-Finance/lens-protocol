@@ -1,9 +1,10 @@
-// Deploy script 
+/*// Deploy script 
 import '@nomiclabs/hardhat-ethers';
 import { hexlify, keccak256, RLP } from 'ethers/lib/utils';
 import fs from 'fs';
 import { task } from 'hardhat/config';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
+import {DeployFunction} from 'hardhat-deploy/types';
 import {
   LensHub__factory,
   ApprovalFollowModule__factory,
@@ -24,27 +25,40 @@ import {
   TransparentUpgradeableProxy__factory,
   ProfileTokenURILogic__factory,
   LensPeripheryDataProvider__factory,
-} from '/typechain-types';
+} from '../../typechain-types';
 import { deployWithVerify, waitForTx } from '../helpers/utils';
+
 
 const TREASURY_FEE_BPS = 50;
 const LENS_HUB_NFT_NAME = 'Various Vegetables';
 const LENS_HUB_NFT_SYMBOL = 'VVGT';
 
-task('specto-swap-deploy', 'deploys specto-swap').setAction(async ({}, hre) => {
+task('specto-swap-deploy', 'deploys specto-swap').setAction(async ({}, hre: HardhatRuntimeEnvironment) => {
     // Note that the use of these signers is a placeholder and is not meant to be used in
     // production.
+	 const {deployer} = await hre.getNamedAccounts();
+	 const {deploy} = hre.deployments;
+
     const ethers = hre.ethers;
     const accounts = await ethers.getSigners();
-    const deployer = accounts[0];
-    const governance = accounts[1];
-    const treasuryAddress = accounts[2].address;
   
-    // Nonce management in case of deployment issues
-    let deployerNonce = await ethers.provider.getTransactionCount(deployer.address);
-  
-    console.log('\n\t -- Deploying Module Globals --');
-    const moduleGlobals = await deployWithVerify(
+	console.log('\n\t -- Deploying CollectionNFT --');
+
+
+	console.log('\n\t -- Deploying FollowerNFT --');
+
+
+    console.log('\n\t -- Deploying Specto --');
+
+    let args = [accounts[1].address,accounts[2].address];
+
+	await deploy("SpectoSwap", {
+		from: accounts[0].address,
+		args:args,
+		log: true,
+		deterministicDeployment: false
+	})
+    /*const moduleGlobals = await deployWithVerify(
       new ModuleGlobals__factory(deployer).deploy(
         governance.address,
         treasuryAddress,
@@ -55,4 +69,5 @@ task('specto-swap-deploy', 'deploys specto-swap').setAction(async ({}, hre) => {
       'contracts/swaps/spectoSwap'
     );
   
-    console.log('\n\t-- Deploying Logic Libs --');  
+    console.log('\n\t-- Deploying Specto Swap --');  
+});*/

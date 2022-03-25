@@ -34,7 +34,7 @@
   },
   "homepage": "",
   "devDependencies": {
-    "@nomiclabs/hardhat-ethers": "2.0.2",
+    "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers",
     "@nomiclabs/hardhat-etherscan": "2.1.8",
     "@typechain/ethers-v5": "8.0.5",
     "@typechain/hardhat": "3.0.0",
@@ -71,7 +71,9 @@
     }
   },
   "dependencies": {
-    "@openzeppelin/contracts": "4.5.0"
+    "@ethersproject/abi": "^5.6.0",
+    "@openzeppelin/contracts": "4.5.0",
+    "hardhat-deploy": "^0.11.2"
   },
   "author": "Lens",
   "contributors": [
