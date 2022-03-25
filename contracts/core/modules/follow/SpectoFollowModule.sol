@@ -45,27 +45,7 @@ contract SpectoFollowModule is IFollowModule, FollowValidatorFollowModuleBase {
         if (addresses.length != toApprove.length) revert Errors.InitParamsInvalid();
         address owner = IERC721(HUB).ownerOf(profileId);
         if (msg.sender != owner) revert Errors.NotProfileOwner();
-
-        // Initialize FollowNFT
-        initialize(profileId, "Ecto", "ECTO");
-        // Mint all Follow NFT
-        mintAllFollowNFT();
-        // The delegatee address is receiving the governance power delegation.
-        delegate(address(this));
-        
-        /*for (uint256 i = 0; i < addresses.length; ++i) {
-        	if(IERC721(collection).ownerOf(tokenId[i]) == msg.sender) revert Errors.NotCollectionNFTOwner();
-            _approvedByProfileByOwner[owner][profileId][tokenId[i]] = addresses[i]; //toApprove[i];
-        }*/
-
         emit Events.FollowsApproved(owner, profileId, addresses, toApprove, block.timestamp);
-    }
-
-    // Mints FollowNFT to owner
-    function mintAllFollowNFT() internal {
-        for(uint256 i = 0; i < 10; i++) {
-            mint(msg.sender)
-        }
     }
 
     /**
@@ -83,17 +63,8 @@ contract SpectoFollowModule is IFollowModule, FollowValidatorFollowModuleBase {
         returns (bytes memory)
     {
         address owner = IERC721(HUB).ownerOf(profileId);
-
-        if (data.length > 0) {
-            //address[] memory addresses = abi.decode(data, (address[]));
-            // Get collection address
-            address[] memory collection = abi.decode(data, (address[]));
-            // Set collection as global variable
-
-            /*for (uint256 i = 0; i < addresses.length; ++i) {
-                _approvedByProfileByOwner[owner][profileId][addresses[i]] = true;
-            }*/
-        }
+        if (msg.sender != owner) revert Errors.NotProfileOwner();
+        address[] memory collection = abi.decode(data, (address[]));
         return data;
     }
 
@@ -108,10 +79,6 @@ contract SpectoFollowModule is IFollowModule, FollowValidatorFollowModuleBase {
     ) external override onlyHub {
         address owner = IERC721(HUB).ownerOf(profileId);
         if (msg.sender != owner) revert Errors.NotProfileOwner();
-
-        /*if (!_approvedByProfileByOwner[owner][profileId][follower])
-            revert Errors.FollowNotApproved();
-        _approvedByProfileByOwner[owner][profileId][follower] = false; // prevents repeat follows*/
     }
 
     /**
