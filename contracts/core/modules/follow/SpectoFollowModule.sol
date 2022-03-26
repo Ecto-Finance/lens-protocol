@@ -16,32 +16,11 @@ import {IERC721} from '@openzeppelin/contracts/token/ERC721/IERC721.sol';
  * @notice This follow module only allows addresses that are approved for a profile by the profile owner to follow.
  */
 contract SpectoFollowModule is IFollowModule, FollowValidatorFollowModuleBase {
-    // We use a triple nested mapping so that, on profile transfer, the previous approved address list is invalid;
-    mapping(address => mapping(uint256 => mapping(address => bool)))
-        internal _approvedByProfileByOwner;
-
+    
     // Collection address
     address collection;
 
     constructor(address hub) ModuleBase(hub) {}
-
-    /**
-     * @notice A custom function that allows profile owners to customize approved addresses.
-     *
-     * @param profileId The profile ID to approve/disapprove follower addresses for.
-     * @param addresses The addresses to approve/disapprove for following the profile.
-     * @param toApprove Whether to approve or disapprove the addresses for following the profile.
-     */
-    function approve(
-        uint256 profileId,
-        address[] calldata addresses,
-        bool[] calldata toApprove
-    ) external {
-        if (addresses.length != toApprove.length) revert Errors.InitParamsInvalid();
-        address owner = IERC721(HUB).ownerOf(profileId);
-        if (msg.sender != owner) revert Errors.NotProfileOwner();
-        emit Events.FollowsApproved(owner, profileId, addresses, toApprove, block.timestamp);
-    }
 
     /**
      * @notice This follow module works on custom profile owner approvals.
@@ -85,40 +64,4 @@ contract SpectoFollowModule is IFollowModule, FollowValidatorFollowModuleBase {
         address to,
         uint256 followNFTTokenId
     ) external override {}
-
-    /**
-     * @notice Returns whether the given address is approved for the profile owned by a given address.
-     *
-     * @param profileOwner The profile owner of the profile to query the approval with.
-     * @param profileId The token ID of the profile to query approval with.
-     * @param toCheck The address to query approval for.
-     *
-     * @return
-     */
-    function isApproved(
-        address profileOwner,
-        uint256 profileId,
-        address toCheck
-    ) external view returns (bool) {
-        return _approvedByProfileByOwner[profileOwner][profileId][toCheck];
-    }
-
-    /**
-     * @notice Returns whether the given addresses are approved for the profile owned by a given address.
-     *
-     * @param profileOwner The profile owner of the profile to query the approvals with.
-     * @param profileId The token ID of the profile to query approvals with.
-     * @param toCheck The address array to query approvals for.
-     */
-    function isApprovedArray(
-        address profileOwner,
-        uint256 profileId,
-        address[] calldata toCheck
-    ) external view returns (bool[] memory) {
-        bool[] memory approved = new bool[](toCheck.length);
-        for (uint256 i = 0; i < toCheck.length; ++i) {
-            approved[i] = _approvedByProfileByOwner[profileOwner][profileId][toCheck[i]];
-        }
-        return approved;
-    }
 }
