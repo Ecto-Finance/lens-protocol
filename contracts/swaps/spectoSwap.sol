@@ -3,8 +3,9 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import '@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol';
+import '@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol';
 
-contract SpectoSwap is ERC721Enumerable, Ownable {
+contract SpectoSwap is IERC721Receiver, ERC721Enumerable, Ownable {
 
     
 	// Original non-lens NFT
@@ -14,10 +15,10 @@ contract SpectoSwap is ERC721Enumerable, Ownable {
 
     error NotNFTOwner();
 
-    event SwapToLens(address);
-    event SwapFromLens(address);
+    event SwapToLens();
+    event SwapFromLens();
 
-    constructor(address _collectionNFTAddress, address _followNFTAddress) ERC721('test','test'){
+    constructor(address _collectionNFTAddress, address _followNFTAddress) ERC721('test','test') {
         collectionNFTAddress = _collectionNFTAddress;
         followNFTAddress = _followNFTAddress;
         
@@ -29,12 +30,10 @@ contract SpectoSwap is ERC721Enumerable, Ownable {
 	 * 
 	 */
     function swapToLens(uint256 tokenId) external {
-        if(IERC721(collectionNFTAddress).ownerOf(tokenId) == msg.sender) revert NotNFTOwner();
-        IERC721(collectionNFTAddress).approve(address(this),tokenId);
-        IERC721(followNFTAddress).approve(address(this),tokenId);
+        if(IERC721(collectionNFTAddress).ownerOf(tokenId) != msg.sender) revert NotNFTOwner();
         IERC721(collectionNFTAddress).safeTransferFrom(msg.sender, address(this), tokenId);
         IERC721(followNFTAddress).safeTransferFrom(address(this), msg.sender, tokenId);
-        emit SwapToLens(msg.sender);
+        emit SwapToLens();
     }
 
 	/**
@@ -43,12 +42,10 @@ contract SpectoSwap is ERC721Enumerable, Ownable {
 	 * 
 	 */
     function swapFromLens(uint256 tokenId) external {
-        if(IERC721(collectionNFTAddress).ownerOf(tokenId) == msg.sender) revert NotNFTOwner();
-        IERC721(collectionNFTAddress).approve(address(this),tokenId);
-        IERC721(followNFTAddress).approve(address(this),tokenId);
+        if(IERC721(followNFTAddress).ownerOf(tokenId) != msg.sender) revert NotNFTOwner();
         IERC721(followNFTAddress).safeTransferFrom(msg.sender, address(this), tokenId);
         IERC721(collectionNFTAddress).safeTransferFrom(address(this), msg.sender, tokenId);
-        emit SwapFromLens(msg.sender);
+        emit SwapFromLens();
     }
 
     function updateCollectionNFTAddress(address _newAddress) public onlyOwner {
@@ -57,5 +54,10 @@ contract SpectoSwap is ERC721Enumerable, Ownable {
 
     function updateFollowNFTAddress(address _newAddress) public onlyOwner {
         followNFTAddress = _newAddress;
+    }
+
+    function onERC721Received(address,address from, uint256, bytes calldata) external pure override returns(bytes4){
+    	require(from != address(0x0));
+    	return IERC721Receiver.onERC721Received.selector;
     }
 }
