@@ -34,9 +34,8 @@ contract SpectoFollowModule is IFollowModule, FollowValidatorFollowModuleBase {
      */
     function approve(
         uint256 profileId,
-        uint[] tokenIds,
         address[] calldata addresses,
-        //bool[] calldata toApprove
+        bool[] calldata toApprove
     ) external {
         if (addresses.length != toApprove.length) revert Errors.InitParamsInvalid();
         address owner = IERC721(HUB).ownerOf(profileId);
