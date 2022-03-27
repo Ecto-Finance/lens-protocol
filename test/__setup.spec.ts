@@ -8,6 +8,8 @@ import { ethers } from 'hardhat';
 import {
   ApprovalFollowModule,
   ApprovalFollowModule__factory,
+  SpectoFollowModule,
+  SpectoFollowModule__factory,
   CollectNFT__factory,
   Currency,
   Currency__factory,
@@ -113,6 +115,7 @@ export let limitedTimedFeeCollectModule: LimitedTimedFeeCollectModule;
 
 // Follow
 export let approvalFollowModule: ApprovalFollowModule;
+export let spectoFollowModule: SpectoFollowModule;
 export let feeFollowModule: FeeFollowModule;
 export let mockFollowModule: MockFollowModule;
 
@@ -230,6 +233,10 @@ before(async function () {
     moduleGlobals.address
   );
   approvalFollowModule = await new ApprovalFollowModule__factory(deployer).deploy(lensHub.address);
+  followerOnlyReferenceModule = await new FollowerOnlyReferenceModule__factory(deployer).deploy(
+    lensHub.address
+  );
+  spectoFollowModule = await new SpectoFollowModule__factory(deployer).deploy(lensHub.address);
   followerOnlyReferenceModule = await new FollowerOnlyReferenceModule__factory(deployer).deploy(
     lensHub.address
   );
